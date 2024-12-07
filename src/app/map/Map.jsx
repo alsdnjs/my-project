@@ -154,7 +154,7 @@ const Map = () => {
 
   return (
     <div style={{ display: "flex" }}>
-      <div id="map" style={{ width: "33%", height: "600px", marginRight: "35px" }}></div>
+      <div id="map" style={{ width: "33%", height: "600px", marginRight: "35px"}}></div>
       <div style={{ width: "60%" }}>
         <h3>캠핑장 정보 </h3>
         <p>총 캠핑장 수: {filteredCamps.length}</p>
@@ -163,6 +163,7 @@ const Map = () => {
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
             gap: "20px",
+            
           }}
         >
           {getCurrentPageData().length > 0 ? (
@@ -194,6 +195,7 @@ const Map = () => {
                     등록된 이미지 없음
                   </div>
                 )}
+                {/* 이름 , 주소 스타일 */}
                 <div style={{ marginTop: "10px" }}>
                   <strong>{camp.facltNm}</strong>
                   <div>{camp.addr1}</div>

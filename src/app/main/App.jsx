@@ -117,12 +117,12 @@ export default function App() {
                     </SwiperSlide>
                     <SwiperSlide>
                         <div className="slide-content">
-                            <img src="./images/cam1.webp"  alt="Slide 2" />
+                            <img src="./images/campingg2.jpg"  alt="Slide 2" />
                         </div>
                     </SwiperSlide>
                     <SwiperSlide>
                         <div className="slide-content">
-                            <img src="./images/cam1.webp"  alt="Slide 3" />
+                            <img src="./images/campingg3.jpg"  alt="Slide 3" />
                         </div>
                     </SwiperSlide>
                 </Swiper>
