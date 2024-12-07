@@ -208,14 +208,14 @@ export default function App() {
                     ))}
                 </Swiper>
 
-                <div className="camping-list">
+                {/* <div className="camping-list">
                     {filteredData && filteredData.map((item, index) => (
                         <div key={index} className="camping-item">
                             <img src={item.firstImageUrl} alt={item.facltNm} style={{ height: '300px', objectFit: 'cover' }} />
                             <h1>{item.facltNm}</h1>
                         </div>
                     ))}
-                </div>
+                </div> */}
             </div>
         </div>
     );

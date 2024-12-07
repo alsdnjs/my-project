@@ -17,8 +17,13 @@ const Map = () => {
         window.kakao.maps.load(() => {
           const mapContainer = document.getElementById("map");
           const mapOptions = {
-            center: new window.kakao.maps.LatLng(36.5, 127.5), // 대한민국 중심 좌표
-            level: 13, // 확대 레벨
+            center: new window.kakao.maps.LatLng(35.7177, 127.1533),
+            level: 13,
+            zoomable: false,
+            scrollwheel: false,
+            draggable: false,
+            minLevel: 13,
+            maxLevel: 13,
           };
 
           const map = new window.kakao.maps.Map(mapContainer, mapOptions);
@@ -54,9 +59,9 @@ const Map = () => {
             // 마커에 지역 이름을 표시할 label 생성
             const label = new window.kakao.maps.CustomOverlay({
               position: position,
-              content: `<div style="background-color: white; padding: 3px; border-radius: 3px; border: 1px solid #ccc; font-size: 10px;">${markerData.name}</div>`,
-              xAnchor: 0.5, // 마커를 기준으로 수평 가운데 정렬
-              yAnchor: 2.5, // 마커 아래에 위치하도록 설정
+              content: `<div style="background-color: white; padding: 3px; border-radius: 10px; border: 1px solid #ccc; font-size: 10px;">${markerData.name}</div>`,
+              xAnchor: 0.5,
+              yAnchor: 2.5,
             });
 
             // 라벨을 지도에 추가
@@ -67,6 +72,9 @@ const Map = () => {
               fetchCampData(markerData.name); // 지역 기반 데이터 호출
             });
           });
+
+          // 처음에 전체 캠핑장 데이터를 가져오기
+          fetchCampData();
         });
       } else {
         console.error("카카오맵 API 로드 실패");
@@ -84,7 +92,8 @@ const Map = () => {
     };
   }, []);
 
-  const fetchCampData = async (region) => {
+  // 캠핑장 데이터를 가져오는 함수
+  const fetchCampData = async (region = "") => {
     try {
       const response = await fetch(
         `https://apis.data.go.kr/B551011/GoCamping/basedList?serviceKey=0nU1JWq4PQ1i5sjvesSwir9C4yWQy66K695whewvIpbxtuV1H5ZU8gDIp4c0N9rL4Yt4wQU5eLviLsHKxks9rg%3D%3D&numOfRows=2000&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json`
@@ -92,42 +101,42 @@ const Map = () => {
       const data = await response.json();
       const camps = data.response.body.items.item;
       setCampData(camps);
-
-      const filtered = camps.filter((camp) => camp.addr1.includes(region));
-      setFilteredCamps(filtered);
+      
+      // 지역 필터링
+      if (region) {
+        const filtered = camps.filter((camp) => camp.addr1.includes(region));
+        setFilteredCamps(filtered);
+      } else {
+        setFilteredCamps(camps); // 초기에는 필터 없이 모든 캠핑장 표시
+      }
       setCurrentPage(1); // 페이지를 처음으로 리셋
     } catch (error) {
       console.error("캠핑장 데이터를 가져오는 중 오류 발생:", error);
     }
   };
 
-  // 현재 페이지에 해당하는 캠핑장 데이터 가져오기
   const getCurrentPageData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredCamps.slice(startIndex, startIndex + itemsPerPage);
   };
 
-  // 총 페이지 수 계산
   const totalPages = Math.ceil(filteredCamps.length / itemsPerPage);
 
-  // 페이지 번호 생성 (5페이지 이상일 경우)
   const generatePageNumbers = () => {
     const pageNumbers = [];
     if (totalPages > 5) {
-      let start = Math.max(currentPage - 2, 1); // 현재 페이지 기준으로 이전 2페이지부터 시작
-      let end = Math.min(currentPage + 2, totalPages); // 현재 페이지 기준으로 다음 2페이지까지 표시
+      let start = Math.max(currentPage - 2, 1);
+      let end = Math.min(currentPage + 2, totalPages);
 
       for (let i = start; i <= end; i++) {
         pageNumbers.push(i);
       }
 
-      // 5 페이지 이상일 때, 5 페이지 이상 넘어가면 '...' 추가
       if (end < totalPages) {
         pageNumbers.push("...");
         pageNumbers.push(totalPages);
       }
 
-      // 5 페이지 이상일 경우 1 페이지를 추가로 포함시킬 수 있음
       if (start > 1) {
         pageNumbers.unshift(1);
         if (start > 2) {
@@ -135,7 +144,6 @@ const Map = () => {
         }
       }
     } else {
-      // 5페이지 이하인 경우 모든 페이지 표시
       for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
       }
@@ -146,28 +154,30 @@ const Map = () => {
 
   return (
     <div style={{ display: "flex" }}>
-      <div id="map" style={{ width: "43%", height: "500px", marginRight: "20px" }}></div>
-      <div style={{ width: "40%" }}>
-        <h3>캠핑장 정보</h3>
+      <div id="map" style={{ width: "33%", height: "600px", marginRight: "35px" }}></div>
+      <div style={{ width: "60%" }}>
+        <h3>캠핑장 정보 </h3>
         <p>총 캠핑장 수: {filteredCamps.length}</p>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)", // 3개씩 가로로 나열
+            gridTemplateColumns: "repeat(3, 1fr)",
             gap: "20px",
           }}
         >
           {getCurrentPageData().length > 0 ? (
             getCurrentPageData().map((camp) => (
               <div key={camp.contentId} style={{ marginBottom: "20px" }}>
-                <div>
-                  <strong>{camp.facltNm}</strong> - {camp.addr1}
-                </div>
                 {camp.firstImageUrl ? (
                   <img
                     src={camp.firstImageUrl}
                     alt={camp.facltNm}
-                    style={{ width: "100%", height: "150px", objectFit: "cover" }}
+                    style={{
+                      width: "100%",
+                      height: "150px",
+                      objectFit: "cover",
+                      borderRadius: "15px",
+                    }}
                   />
                 ) : (
                   <div
@@ -178,11 +188,16 @@ const Map = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      borderRadius: "15px",
                     }}
                   >
                     등록된 이미지 없음
                   </div>
                 )}
+                <div style={{ marginTop: "10px" }}>
+                  <strong>{camp.facltNm}</strong>
+                  <div>{camp.addr1}</div>
+                </div>
               </div>
             ))
           ) : (
