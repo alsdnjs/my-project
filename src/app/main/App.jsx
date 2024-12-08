@@ -180,7 +180,7 @@ export default function App() {
                 onMouseEnter={() => setShowNavigation(true)} // 마우스 진입 시 버튼 표시
                 onMouseLeave={() => setShowNavigation(false)} // 마우스 나가면 버튼 숨김
             >
-                <div className="month-text">12월 추천 캠핑장 !</div> {/* 텍스트 추가 */}
+                <div className="month-text">12월 ! 여기서 캠핑 어때?</div> {/* 텍스트 추가 */}
                 <Swiper
                     modules={[Virtual, Navigation, Pagination]}
                     onSwiper={setSwiperRef}
