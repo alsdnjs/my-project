@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const Map = () => {
@@ -6,7 +7,7 @@ const Map = () => {
   const [filteredCamps, setFilteredCamps] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6; // 한 페이지에 6개 (3개씩 2열)
-
+  const router = useRouter();
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=82653f2edcf163a11fb5d8dc0dab9587&autoload=false`;
@@ -69,7 +70,7 @@ const Map = () => {
 
             // 마커 클릭 이벤트
             window.kakao.maps.event.addListener(marker, "click", () => {
-              fetchCampData(markerData.name); // 지역 기반 데이터 호출
+              fetchCampData(markerData.name); // 클릭한 마커 지역에 맞는 캠핑장 데이터 가져오기
             });
           });
 
@@ -95,23 +96,24 @@ const Map = () => {
   // 캠핑장 데이터를 가져오는 함수
   const fetchCampData = async (region = "") => {
     try {
-      const response = await fetch(
-        `https://apis.data.go.kr/B551011/GoCamping/basedList?serviceKey=0nU1JWq4PQ1i5sjvesSwir9C4yWQy66K695whewvIpbxtuV1H5ZU8gDIp4c0N9rL4Yt4wQU5eLviLsHKxks9rg%3D%3D&numOfRows=2000&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json`
-      );
-      const data = await response.json();
-      const camps = data.response.body.items.item;
-      setCampData(camps);
-      
-      // 지역 필터링
-      if (region) {
-        const filtered = camps.filter((camp) => camp.addr1.includes(region));
-        setFilteredCamps(filtered);
-      } else {
-        setFilteredCamps(camps); // 초기에는 필터 없이 모든 캠핑장 표시
+      const response = await fetch("http://localhost:8080/api/camping/sites");
+
+      if (!response.ok) {
+        throw new Error("네트워크 응답이 정상적이지 않습니다.");
       }
-      setCurrentPage(1); // 페이지를 처음으로 리셋
+
+      const data = await response.json();
+
+      // 지역에 맞는 캠핑장 데이터 필터링
+      const filteredData = region
+        ? data.filter((camp) => camp.addr1.includes(region))
+        : data;
+
+      setCampData(data);
+      setFilteredCamps(filteredData);
+      setCurrentPage(1);
     } catch (error) {
-      console.error("캠핑장 데이터를 가져오는 중 오류 발생:", error);
+      console.error("캠핑장 데이터를 가져오는 중 오류 발생:", error.message || error);
     }
   };
 
@@ -119,6 +121,11 @@ const Map = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredCamps.slice(startIndex, startIndex + itemsPerPage);
   };
+
+    // 상세 페이지로 이동
+    const handleDetailClick = (contentId) => {
+      router.push(`/campingdetail/${contentId}`); // 디테일 페이지로 이동
+    };
 
   const totalPages = Math.ceil(filteredCamps.length / itemsPerPage);
 
@@ -154,7 +161,7 @@ const Map = () => {
 
   return (
     <div style={{ display: "flex" }}>
-      <div id="map" style={{ width: "33%", height: "600px", marginRight: "35px"}}></div>
+      <div id="map" style={{ width: "33%", height: "600px", marginRight: "35px" }}></div>
       <div style={{ width: "60%" }}>
         <h3>캠핑장 정보 </h3>
         <p>총 캠핑장 수: {filteredCamps.length}</p>
@@ -163,7 +170,6 @@ const Map = () => {
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
             gap: "20px",
-            
           }}
         >
           {getCurrentPageData().length > 0 ? (
@@ -171,6 +177,7 @@ const Map = () => {
               <div key={camp.contentId} style={{ marginBottom: "20px" }}>
                 {camp.firstImageUrl ? (
                   <img
+                  onClick={() => handleDetailClick(camp.contentId)}
                     src={camp.firstImageUrl}
                     alt={camp.facltNm}
                     style={{
@@ -195,7 +202,6 @@ const Map = () => {
                     등록된 이미지 없음
                   </div>
                 )}
-                {/* 이름 , 주소 스타일 */}
                 <div style={{ marginTop: "10px" }}>
                   <strong>{camp.facltNm}</strong>
                   <div>{camp.addr1}</div>
@@ -220,8 +226,7 @@ const Map = () => {
                 borderRadius: "3px",
                 cursor: pageNum !== "..." ? "pointer" : "default",
               }}
-              disabled={pageNum === "..."}
-            >
+              disabled={pageNum === "..."} >
               {pageNum}
             </button>
           ))}

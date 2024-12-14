@@ -17,12 +17,14 @@
     "leaflet": "^1.9.4",
     "next": "^15.0.3",
     "react": "^18.3.1",
+    "react-calendar": "^5.1.0",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.0.2",
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
-    "swiper": "^11.1.15"
+    "swiper": "^11.1.15",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "eslint": "^8",

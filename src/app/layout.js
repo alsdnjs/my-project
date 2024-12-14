@@ -1,16 +1,18 @@
 import React from 'react';
 import Header from './component/Header';
-import App from './main/App';
-import Map from './map/Map';
+
+import Footer from './component/Footer';
+
 
 const Layout = ({ children }) => {
   return (
     <html lang="ko">
       <body>
         <Header />
-        <App />
-       <Map />
+        
         {children}
+        
+        <Footer />
       </body>
     </html>
   );
