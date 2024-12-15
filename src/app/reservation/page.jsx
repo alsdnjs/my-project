@@ -40,12 +40,23 @@ const PayCalendar = () => {
         />
       </div>
       <div style={detailsStyle}>
-        <h3 style={headingStyle}>숙박 정보</h3>
-        <p>체크인: {dateRange[0] ? dateRange[0].toDateString() : "날짜를 선택해주세요"}</p>
-        <p>체크아웃: {dateRange[1] ? dateRange[1].toDateString() : "날짜를 선택해주세요"}</p>
-        <p>숙박 일수: {nights > 0 ? `${nights}박` : "날짜를 선택해주세요"}</p>
-        <button style={buttonStyle}>결제하기</button>
-      </div>
+  <h3 style={headingStyle}>숙박 정보</h3>
+  <p>
+    체크인:{" "}
+    {dateRange[0]
+      ? `${dateRange[0].toDateString()} 오후 3시`
+      : "날짜를 선택해주세요"}
+  </p>
+  <p>
+    체크아웃:{" "}
+    {dateRange[1]
+      ? `${dateRange[1].toDateString()} 오전 11시`
+      : "날짜를 선택해주세요"}
+  </p>
+  <p>숙박 일수: {nights > 0 ? `${nights}박` : "날짜를 선택해주세요"}</p>
+  <button style={buttonStyle}>결제하기</button>
+</div>
+
     </div>
   );
 };
