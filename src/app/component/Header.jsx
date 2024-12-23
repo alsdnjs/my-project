@@ -51,7 +51,7 @@ const Header = () => {
             </Box>
 
             <Box className="toolbar-right">
-              <Link href="/" underline="none">
+              <Link href="/admin" underline="none">
                 <PersonIcon className="icon" />
               </Link>
               <Link href="/" underline="none">
@@ -89,7 +89,7 @@ const Header = () => {
                 <Link href="/authentication/login" className="appbar-link">
                   Login
                 </Link>
-                <Link href="/customer-center" className="appbar-link">
+                <Link href="/customer-center/notice" className="appbar-link">
                   Customer Service
                 </Link>
               </Box>
