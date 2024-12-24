@@ -2,13 +2,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Box, Typography, Checkbox, FormControlLabel, List, ListItem, ListItemText, Collapse, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import axios from "axios";
-import styles from "./Authentication.module.css";
-import InputForm from "../../../components/InputForm";
+
 import useSignup from "../../../authentication/signUp/hooks/useSignUP";
-import CommonUserForm from "../../../components/CommonUserForm";
+import CommonUserForm from "../../../component/CommonUserForm";
 
 function updateUserInfoPage() {
 
