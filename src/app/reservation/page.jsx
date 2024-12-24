@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import moment from "moment";
 import "./paycalendar.css"; // CSS 파일 임포트
 import axios from "axios"; // axios 임포트
+import Cookies from "js-cookie"; // 쿠키 처리
 
 const PayCalendar = () => {
   const searchParams = useSearchParams();
@@ -49,6 +50,7 @@ const PayCalendar = () => {
   if (!hydrated) {
     return null; // 클라이언트가 준비되기 전 렌더링하지 않음
   }
+
   const onChange = (range) => {
     setDateRange(range);
 
@@ -96,9 +98,19 @@ const PayCalendar = () => {
           failUrl: `${window.location.origin}/reservation/fail`,
         });
 
+        // 쿠키에서 토큰 가져오기
+        const token = Cookies.get("access_token");
+        if (!token) {
+          alert("로그인 정보가 없습니다.");
+          return;
+        }
+
+        // 토큰에서 사용자 정보 추출 (예: user_idx)
+        const userIdx = getUserIdxFromToken(token);
+
         // 결제 후 서버로 결제 정보 저장
         const paymentData = {
-          user_idx: 4, // 로그인 후 실제 user_idx로 변경 (예: session에서 가져오기)
+          user_idx: userIdx, // 쿠키에서 추출한 user_idx 사용
           action_type: "예약",
           action_date: new Date().toISOString(),
           payment_amount: totalPrice,
@@ -146,6 +158,12 @@ const PayCalendar = () => {
       console.log("TossPayments SDK가 준비되지 않음");
       alert("결제를 준비할 수 없습니다. 잠시 후 다시 시도하세요.");
     }
+  };
+
+  const getUserIdxFromToken = (token) => {
+    // JWT 토큰을 디코딩하여 user_idx 추출 (예시)
+    const payload = JSON.parse(atob(token.split('.')[1])); // JWT 디코딩
+    return payload.user_idx; // 토큰에서 user_idx 추출
   };
 
   return (
